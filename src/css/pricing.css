@@ -1,0 +1,72 @@
+.pricing-table_mobile-tabs-hidden {
+  transition-property: height;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+}
+
+.pricing-table_mobile-tab-icon {
+  transition-property: transform;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.pricing-table_mobile-dropdown.is-open .pricing-table_mobile-tab-icon {
+  transform: rotateX(180deg);
+}
+
+.pricing_toggle [data-element='pricing-icon-toggle'] {
+  display: none;
+}
+
+.pricing_toggle-wrp:not(.is-mobile-table)
+  .pricing_toggle.is-active
+  [data-element='pricing-icon-toggle'],
+.pricing_toggle-wrp.is-mobile-table
+  .pricing_toggle.w--current
+  [data-element='pricing-icon-toggle'] {
+  display: block;
+}
+
+.text-rich-text.is-pricing ul,
+.text-rich-text.is-pricing ol {
+  list-style: none;
+  padding: 0;
+}
+
+.text-rich-text.is-pricing li {
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.text-rich-text.is-pricing li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18 7L11.3333 16L6 12.4' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M18 7L11.3333 16L6 12.4' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+/* Variante croix : ajouter la classe is-x sur le bloc rich text */
+.text-rich-text.is-pricing.is-x li::before {
+  content: '✗';
+  width: auto;
+  height: auto;
+  background: none;
+  -webkit-mask: none;
+  mask: none;
+}
+@media (min-width: 992px) and (max-width: 1200px) {
+  .pricing_card-deco-wrp {
+    inset: -10% 0% auto;
+  }
+  .pricing_card-popular-svg {
+    width: 10rem;
+  }
+}

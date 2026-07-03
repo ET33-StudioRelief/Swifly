@@ -1,0 +1,52 @@
+/** TABS-PERSONAS */
+.tab_link.w--current::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-68%, -65%);
+  width: 26px;
+  aspect-ratio: 26 / 25;
+  background-image: url('data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%2026%2025%27%20xmlns%3D%27http://www.w3.org/2000/svg%27%3E%3Cpath%20d%3D%27M0%2020.407C2.66666%2020.407%207.29578%2019.4903%2011.5556%2023.157M2.66666%201.15698C7.11111%204.82365%2013.6253%2010.732%2015.0948%2016.5112M24%202.99032C23.1111%204.82365%2022.0064%2010.6293%2022.2222%2013.0736%27%20stroke%3D%27%23101017%27%20stroke-width%3D%273%27%20stroke-linejoin%3D%27round%27%20fill%3D%27none%27/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  pointer-events: none;
+}
+/** TABS-FEATURES */
+.features_tabs-link.w--current::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-68%, -65%);
+  width: 26px;
+  aspect-ratio: 26 / 25;
+  background-image: url('data:image/svg+xml,%3Csvg%20viewBox%3D%270%200%2026%2025%27%20xmlns%3D%27http://www.w3.org/2000/svg%27%3E%3Cpath%20d%3D%27M0%2020.407C2.66666%2020.407%207.29578%2019.4903%2011.5556%2023.157M2.66666%201.15698C7.11111%204.82365%2013.6253%2010.732%2015.0948%2016.5112M24%202.99032C23.1111%204.82365%2022.0064%2010.6293%2022.2222%2013.0736%27%20stroke%3D%27%23101017%27%20stroke-width%3D%273%27%20stroke-linejoin%3D%27round%27%20fill%3D%27none%27/%3E%3C/svg%3E');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  pointer-events: none;
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .personalize_content {
+    padding-top: var(--_responsive---margin--padding--spacer--gap--xxlarge);
+    padding-right: var(--_responsive---margin--padding--spacer--gap--xxlarge);
+    padding-bottom: var(--_responsive---margin--padding--spacer--gap--xxlarge);
+    padding-left: var(--_responsive---margin--padding--spacer--gap--xxlarge);
+  }
+  .personalize_tabs {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0px;
+  }
+  .personalize_card-tab {
+    flex-flow: column-reverse;
+    column-gap: var(--_responsive---margin--padding--spacer--gap--huge);
+    row-gap: var(--_responsive---margin--padding--spacer--gap--huge);
+  }
+  .personalize_img-wrp {
+    width: 100%;
+  }
+}

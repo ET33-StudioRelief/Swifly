@@ -1,0 +1,11 @@
+@media (min-width: 992px) and (max-width: 1200px) {
+  .tools_arrow-wrp {
+    left: 0rem;
+    bottom: -2.4rem;
+    transform: rotateX(0deg) rotateY(180deg) rotateZ(-15deg);
+  }
+  .tools_arrow-icon {
+    width: 2.375rem;
+    height: auto;
+  }
+}

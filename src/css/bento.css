@@ -1,0 +1,43 @@
+/* Bento — mobile slider (desktop grid lives in Webflow, untouched) */
+@media screen and (max-width: 767px) {
+  .bento_slider-list.swiper-wrapper,
+  .bento_slider_list.swiper-wrapper {
+    display: flex;
+    align-items: stretch;
+    box-sizing: content-box;
+  }
+
+  .bento_slide.swiper-slide {
+    display: flex;
+    flex-shrink: 0;
+    height: auto;
+  }
+
+  .bento_slide .card-slot,
+  .bento_slide .bento_card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bento_slide .bento_img-wrp {
+    margin-top: auto;
+  }
+}
+@media screen and (min-width: 992px) and (max-width: 1320px) {
+  .tools_cards-row:where(.w-variant-ba63ab66-2a14-2bfa-9e70-6f59f0fc4dc6) {
+    flex-flow: column;
+  }
+  .tools_card {
+    flex-flow: column-reverse;
+  }
+  .tools_img-wrp {
+    min-height: 0rem;
+    aspect-ratio: auto;
+  }
+  .examples_icon-tools-wrp {
+    width: var(--size--3-5rem);
+    height: var(--size--3-5rem);
+  }
+}

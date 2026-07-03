@@ -1,0 +1,34 @@
+/**
+ * Rotating conic gradient on `.button.is-component`.
+ * `--button-angle` is registered as <angle> so it can be interpolated,
+ * which lets the conic-gradient spin in a circle while hovered.
+ */
+
+@property --button-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.button.is-component {
+  background-image: conic-gradient(
+    from var(--button-angle),
+    var(--swatch--pink-500),
+    var(--swatch--purple-500) 25%,
+    var(--swatch--green-200) 50%,
+    var(--swatch--yellow-200) 75%,
+    var(--swatch--pink-500)
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .button.is-component.is-spinning {
+    animation: button-gradient-spin 2s linear infinite;
+  }
+
+  @keyframes button-gradient-spin {
+    to {
+      --button-angle: 360deg;
+    }
+  }
+}

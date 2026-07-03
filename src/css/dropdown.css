@@ -1,0 +1,20 @@
+.info_drp-dwn [trigger='dropdown-arrow'] {
+  transition-property: transform;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.info_drp-dwn.is-open [trigger='dropdown-arrow'] {
+  transform: rotateX(180deg) rotateY(0deg) rotateZ(0deg);
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .info_component {
+    flex-flow: column;
+  }
+  .drp-info_right-col {
+    max-height: 40rem;
+    min-height: auto;
+  }
+}

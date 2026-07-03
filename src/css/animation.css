@@ -1,0 +1,146 @@
+/**
+ * Fade-in on viewport entry.
+ * add selector `data-css="fade-in-vw"` to the element to animate.
+ */
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  @supports (animation-timeline: view()) {
+    [data-css='fade-in-vw'] {
+      animation: fade-in-vw linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+
+    @keyframes fade-in-vw {
+      from {
+        opacity: 0;
+        transform: translateY(4rem);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /**
+     * Fade-in on viewport entry of direct children.
+     * add `data-css="fade-by-step"` to the container.
+     *
+     * Tune on the container (Webflow custom attributes):
+     * data-fade-step-offset   delay before the 1st child
+     * data-fade-step-gap      stagger between children
+     * data-fade-step-duration length of each fade
+     *
+     * Values accept a number (`5`) or a percentage (`5%`).
+     */
+    [data-css='fade-by-step'] {
+      view-timeline: --fade-by-step-tl;
+      --fade-step-offset: 10%;
+      --fade-step-gap: 10%;
+      --fade-step-duration: 10%;
+    }
+
+    [data-css='fade-by-step'] > * {
+      --fade-step-i: calc(sibling-index() - 1);
+      animation: fade-in-vw linear both;
+      animation-timeline: --fade-by-step-tl;
+      animation-range: entry
+        calc(var(--fade-step-offset) + var(--fade-step-i) * var(--fade-step-gap)) entry
+        calc(
+          var(--fade-step-offset) + var(--fade-step-i) * var(--fade-step-gap) +
+            var(--fade-step-duration)
+        );
+    }
+
+    /**
+     * Staggered fade-in for all `.bento_card` inside a `.bento_grid-wrp`.
+     * `--fade-step-i` is set per card by JS (`initBentoCardsFade`).
+     */
+    .bento_grid-wrp[data-css='fade-bento-cards'] {
+      view-timeline: --fade-bento-cards-tl;
+      --fade-step-offset: 20%;
+      --fade-step-gap: 10%;
+      --fade-step-duration: 7%;
+    }
+
+    .bento_grid-wrp[data-css='fade-bento-cards'] .bento_card {
+      animation: fade-in-vw linear both;
+      animation-timeline: --fade-bento-cards-tl;
+      animation-range: entry
+        calc(var(--fade-step-offset) + var(--fade-step-i, 0) * var(--fade-step-gap)) entry
+        calc(
+          var(--fade-step-offset) + var(--fade-step-i, 0) * var(--fade-step-gap) +
+            var(--fade-step-duration)
+        );
+    }
+  }
+}
+
+/** Shared hero entrance (multi-page) */
+@media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
+  /**
+   * FOUC prevention — keep in sync with entrance sequence below.
+   * Replaces inline Webflow head styles.
+   */
+  [data-element='hero-img-wrapper'] {
+    opacity: 0;
+  }
+
+  [data-element='hero-left-col'] > * {
+    opacity: 0;
+  }
+
+  @keyframes hero-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes navbar-links-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /**
+   * Home hero load sequence: image → left column (stagger) → navbar links.
+   * `--hero-left-col-count` is set by `initHeroEntrance()`.
+   */
+  [data-element='hero-img-wrapper'] {
+    animation: hero-fade-in var(--entrance-duration, 0.6s) cubic-bezier(0.33, 1, 0.68, 1) both;
+  }
+
+  [data-element='hero-left-col'] > * {
+    animation: hero-fade-in var(--entrance-duration, 0.6s) cubic-bezier(0.33, 1, 0.68, 1) both;
+    animation-delay: calc(
+      var(--entrance-duration, 0.6s) + (sibling-index() - 1) * var(--entrance-step, 0.12s)
+    );
+  }
+
+  [data-element='navbar-links'] {
+    animation: navbar-links-fade-in var(--entrance-duration, 0.3s) cubic-bezier(0.33, 1, 0.68, 1)
+      both;
+    animation-delay: calc(
+      (var(--entrance-count, 4) - 1) * var(--entrance-step, 0.12s) + var(--entrance-duration, 0.3s)
+    );
+  }
+
+  :has([data-element='hero-left-col']) [data-element='navbar-links'] {
+    opacity: 0;
+    animation-delay: calc(
+      var(--entrance-duration, 0.6s) * 2 + (var(--hero-left-col-count, 4) - 1) *
+        var(--entrance-step, 0.12s)
+    );
+  }
+}

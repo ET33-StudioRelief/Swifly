@@ -1,0 +1,107 @@
+/* Home - TOOLS SLIDER */
+.stack_list-wrp > .stack_list.swiper-wrapper {
+  display: flex;
+  box-sizing: content-box;
+}
+
+.stack_list-wrp .stack_list-item.swiper-slide {
+  flex-shrink: 0;
+  width: auto;
+}
+
+.stack_list-wrp .stack_list-item.swiper-slide-active > .card {
+  position: relative;
+  overflow: visible;
+}
+
+.stack_list-wrp .stack_list-item.swiper-slide-active > .card::before {
+  content: '';
+  position: absolute;
+  top: -1rem;
+  left: -0.5rem;
+  transform: translate(-50%, -45%);
+  width: 1.5rem;
+  height: 2.875rem;
+  background-image: url('https://cdn.prod.website-files.com/67a4f8d05fbc617cf79f959d/6a43d3d60623f7fe37b0e253_tools-current-icon-slider.svg');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@media screen and (max-width: 767px) {
+  .examples_grid.swiper-wrapper {
+    display: flex;
+    box-sizing: content-box;
+  }
+  .examples_item.swiper-slide {
+    flex-shrink: 0;
+  }
+  /* Annule le padding latéral pour un slider full-bleed*/
+  .section_examples .padding-global {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  /* BENEFICES SLIDER */
+  .benefices_grid-wrp.swiper {
+    overflow: hidden;
+  }
+
+  .benefices_grid-wrp.swiper > .grid-cards_grid._2col.swiper-wrapper {
+    display: flex;
+    box-sizing: content-box;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+    grid-row-gap: unset;
+    grid-column-gap: unset;
+    gap: unset;
+  }
+
+  .benefices_grid-wrp .benefices_slide.swiper-slide {
+    display: flex;
+    flex-shrink: 0;
+    height: auto;
+  }
+
+  .benefices_grid-wrp .benefices_slide .card.is-grid-2col {
+    width: 100%;
+  }
+
+  /* LEADERS SLIDER */
+  .leader-tsml_list-wrp.swiper {
+    width: 100%;
+  }
+
+  /*
+   * Swiper calcule translate3d via width + margin-right des slides.
+   * Un gap Webflow sur le wrapper s'ajoute en plus → décalage progressif.
+   */
+  .leader-tsml_list-wrp.swiper > .leader-tsml_list.swiper-wrapper {
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    box-sizing: content-box;
+    gap: 0 !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
+  }
+
+  .leader-tsml_list-wrp.swiper .leaders_tsml-card.swiper-slide {
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  /* variant show-hands-svg sur la slide active */
+  .leader-tsml_list-wrp.swiper .leaders_tsml-card.swiper-slide .icons_hand.is-leader {
+    display: none;
+  }
+
+  .leader-tsml_list-wrp.swiper .leaders_tsml-card.swiper-slide-active {
+    overflow: visible;
+  }
+
+  .leader-tsml_list-wrp.swiper .leaders_tsml-card.swiper-slide-active .icons_hand.is-leader {
+    display: block;
+  }
+}

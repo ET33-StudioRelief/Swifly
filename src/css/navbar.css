@@ -1,0 +1,100 @@
+/* ─── Scroll hide (initNavbar) ─── */
+/* GPU hint for GSAP yPercent — desktop only to avoid permanent mobile cost. */
+@media (min-width: 768px) {
+  .navbar.w-nav {
+    will-change: transform;
+  }
+}
+
+/* ─── Scroll surface (initNavbar toggles .scrolled) ─── */
+.navbar.w-nav {
+  transition:
+    background 0.4s ease,
+    backdrop-filter 0.4s ease,
+    -webkit-backdrop-filter 0.4s ease;
+}
+
+.navbar.w-nav.scrolled {
+  background: rgba(255, 255, 255, 0.65) !important;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* ─── Dropdown arrow ─── */
+.navbar-drp-toggle.w--open .navbar-drp-arrow {
+  transform: rotate(180deg);
+}
+
+/* ─── Hamburger / toggle mobile ─── */
+.navbar-toggle {
+  position: relative;
+  width: 24px;
+  height: 18px;
+}
+
+.navbar-toggle-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transition:
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.2s ease;
+  transform-origin: center;
+}
+
+.navbar-toggle-line:nth-child(1) {
+  top: 0;
+}
+.navbar-toggle-line:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.navbar-toggle-line:nth-child(3) {
+  bottom: 0;
+}
+
+.navbar-toggle.w--open .navbar-toggle-line:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.navbar-toggle.w--open .navbar-toggle-line:nth-child(2) {
+  opacity: 0;
+  transform: translateY(-50%) scaleX(0.6);
+}
+.navbar-toggle.w--open .navbar-toggle-line:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ─── Icônes dans les nav links ─── */
+.info-card.is-navlink .icon,
+.navbar-drp-link .icon {
+  transition: background-color 0.4s ease;
+}
+
+.info-card.is-navlink:hover .icon,
+.navbar-drp-link:hover .icon {
+  background-color: var(--base-color-brand--purple);
+}
+
+/* ─── Nav hover (desktop, uniquement quand .scrolled) ─── */
+@media (min-width: 992px) {
+  .navbar.w-nav.scrolled .navbar-drp-toggle.-wfp-hover,
+  .navbar.w-nav.scrolled .navbar-drp-toggle:hover,
+  .navbar.w-nav.scrolled .navbar-nav-link.is-block.-wfp-hover,
+  .navbar.w-nav.scrolled .navbar-nav-link.is-block:hover {
+    background-color: var(--swatch--purple-a25);
+  }
+}
+
+/* ─── Breakpoint ≤ 991px ─── */
+@media (max-width: 991px) {
+  .info-card.is-navlink .icon,
+  .navbar-drp-link .icon {
+    background-color: #fff;
+    border: 1px solid #000;
+  }
+  .navbar-drp-toggle .navbar-nav-link {
+    border-bottom: 0;
+  }
+}

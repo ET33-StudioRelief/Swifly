@@ -1,0 +1,34 @@
+/**
+ * Home - BRANDS MARQUEE <480px
+ */
+@media screen and (max-width: 479px) {
+  .brands_logo-wrp.is-marquee {
+    position: relative;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow: clip;
+  }
+  .brands_marquee-track {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: max-content;
+    /* durée = vitesse : plus grand = plus lent. */
+    animation: brands-marquee 25s linear infinite;
+  }
+
+  .brands_marquee-track .brands_item {
+    flex-shrink: 0;
+    margin-right: 0.5rem; /* espacement intégré à l'item (cf. note -50%). */
+  }
+
+  @keyframes brands-marquee {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
