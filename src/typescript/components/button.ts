@@ -1,32 +1,3 @@
-export type OsTarget = 'mac' | 'windows';
-
-type NavigatorUAData = {
-  platform?: string;
-};
-
-/** Reads platform from Client Hints when available, otherwise falls back to legacy APIs. */
-function getPlatform(): string {
-  if ('userAgentData' in navigator) {
-    const { platform } = navigator.userAgentData as NavigatorUAData;
-    if (platform) return platform;
-  }
-  return navigator.platform ?? '';
-}
-
-export function detectOs(): OsTarget {
-  const ua = navigator.userAgent;
-  const platform = getPlatform();
-
-  const isMac =
-    /Mac|iPhone|iPad|iPod/i.test(platform) || (/Mac OS X/i.test(ua) && !/Windows/i.test(ua));
-
-  return isMac ? 'mac' : 'windows';
-}
-
-export function initOsContent(): void {
-  document.documentElement.dataset.os = detectOs();
-}
-
 const INIT_ATTR = 'data-gradient-init';
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 

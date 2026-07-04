@@ -14,10 +14,20 @@
     -webkit-backdrop-filter 0.4s ease;
 }
 
-.navbar.w-nav.scrolled {
-  background: rgba(255, 255, 255, 0.65) !important;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+@media (min-width: 992px) {
+  .navbar.w-nav.scrolled {
+    background: rgba(255, 255, 255, 0.65) !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+@media (max-width: 991px) {
+  .navbar.w-nav.scrolled {
+    background: var(--_brand---surface--secondary) !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 /* ─── Dropdown arrow ─── */

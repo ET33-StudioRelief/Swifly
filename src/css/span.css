@@ -1,0 +1,4 @@
+.footer_btm-cnt .span_double-underline::before {
+  bottom: -0.8em;
+  width: 120%;
+}

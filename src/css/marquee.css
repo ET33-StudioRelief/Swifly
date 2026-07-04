@@ -1,4 +1,42 @@
 /**
+ * Flags marquee — animation CSS mobile uniquement (≤767px).
+ */
+@media screen and (max-width: 767px) {
+  [data-marquee] {
+    overflow: clip;
+  }
+
+  [data-marquee] .marquee-track.is-animated {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: max-content;
+    will-change: transform;
+    animation: flag-marquee var(--marquee-duration, 40s) linear infinite;
+  }
+
+  [data-marquee] .marquee-item {
+    flex-shrink: 0;
+  }
+
+  @keyframes flag-marquee {
+    from {
+      transform: translate3d(-50%, 0, 0);
+    }
+
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+}
+
+@media screen and (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  [data-marquee] .marquee-track.is-animated {
+    animation: none;
+  }
+}
+
+/**
  * Home - BRANDS MARQUEE <480px
  */
 @media screen and (max-width: 479px) {

@@ -1,3 +1,4 @@
+import { TABLET_QUERY } from '../utils/breakpoints';
 import { gsap, ScrollTrigger } from '../utils/gsap';
 
 const SELECTOR = '.navbar';
@@ -42,7 +43,8 @@ const closeDropdownViaWebflow = (toggle: HTMLElement): Promise<void> => {
 
 /**
  * Hides the navbar on scroll down (slide up) and reveals it on scroll up (slide down).
- * Toggles `.scrolled` for a readable glass background past the hero.
+ * Toggles `.scrolled` for a readable background past the hero.
+ * Below TABLET_QUERY (≤991px), `.scrolled` uses `--_brand---surface--secondary` (see navbar.css).
  * Closes open Webflow dropdowns smoothly before hiding.
  */
 export function initNavbar(): void {
@@ -129,6 +131,10 @@ export function initNavbar(): void {
   };
 
   updateScrolled(window.scrollY);
+
+  window.matchMedia(TABLET_QUERY).addEventListener('change', () => {
+    ScrollTrigger.refresh();
+  });
 
   ScrollTrigger.create({
     start: 0,
