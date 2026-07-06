@@ -5,6 +5,7 @@ import { initHeroEntrance } from './typescript/animations/hero-entrance';
 import { initBgParallax } from './typescript/animations/parallax-bg';
 import { initAppsIconsParallax } from './typescript/components/apps-icons';
 import { initButtonGradient } from './typescript/components/button';
+import { initFasterCtaImgScale } from './typescript/components/cta';
 import { initInfoDropdown, initPricingMobileDropdown } from './typescript/components/dropdown';
 import { initHeroArrow } from './typescript/components/hero-arrow';
 import { initBrandsMarquee, initMarqueeFlags } from './typescript/components/marquee';
@@ -36,6 +37,7 @@ window.Webflow.push(() => {
   initFadeByStep();
   initBentoCardsFade();
   initBgParallax();
+  initFasterCtaImgScale();
   initHeroArrow();
   initButtonGradient();
   initPricingToggle();
