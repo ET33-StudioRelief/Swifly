@@ -1,4 +1,27 @@
 @media (min-width: 992px) and (max-width: 1200px) {
+  .tools_cards-row {
+    flex-direction: column;
+  }
+  .tools_card {
+    flex-flow: column-reverse;
+    align-items: flex-start;
+    max-width: 75%;
+  }
+  .tools_img-wrp {
+    max-height: 25rem;
+    width: 100%;
+  }
+  .tools_card-heading-wrp .text-rich-text p {
+    text-align: justify;
+  }
+  .examples_icon-tools-wrp {
+    width: var(--size--3-5rem);
+    height: var(--size--3-5rem);
+  }
+  .examples_icon-tools {
+    width: 1.75rem;
+    max-height: 1.75rem;
+  }
   .tools_arrow-wrp {
     left: 0rem;
     bottom: -2.4rem;
@@ -7,5 +30,13 @@
   .tools_arrow-icon {
     width: 2.375rem;
     height: auto;
+  }
+  .tools_cards-row:where(.w-variant-ba63ab66-2a14-2bfa-9e70-6f59f0fc4dc6) {
+    flex-flow: column;
+  }
+
+  .examples_icon-tools-wrp {
+    width: var(--size--3-5rem);
+    height: var(--size--3-5rem);
   }
 }

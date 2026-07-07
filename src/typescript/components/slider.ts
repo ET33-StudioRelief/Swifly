@@ -282,8 +282,7 @@ export function initTestimonialSlider(selector = '.testimonial_wrapper'): Swiper
     const options: SwiperOptions = {
       centeredSlides: true,
       initialSlide: Math.floor(slideCount / 2),
-      loop: false,
-      rewind: true,
+      loop: true,
       speed: SPEED,
       slidesPerView: 'auto',
       spaceBetween: 40,

@@ -127,20 +127,23 @@ export function initHeroArrow(): void {
         timeline.play();
       };
 
-      const scrollTrigger = ScrollTrigger.create({
-        trigger: document.body,
-        start: `top+=${threshold} top`,
-        onEnter: () => {
-          playOnce();
-          scrollTrigger.kill();
-        },
-      });
-
+      // Already past threshold (e.g. mid-page refresh) — skip ScrollTrigger entirely.
       if (window.scrollY >= threshold) {
         hasPlayed = true;
         timeline.progress(1);
-        scrollTrigger.kill();
+        return () => {
+          timeline.kill();
+        };
       }
+
+      const scrollTrigger = ScrollTrigger.create({
+        trigger: document.body,
+        start: `top+=${threshold} top`,
+        onEnter: (self) => {
+          playOnce();
+          self.kill();
+        },
+      });
 
       return () => {
         scrollTrigger.kill();
