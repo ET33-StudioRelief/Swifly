@@ -1,10 +1,19 @@
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+
 import { gsap } from '../utils/gsap';
 import { loadScript } from '../utils/loadScript';
+
+gsap.registerPlugin(ScrollToPlugin);
 
 const RECORDER_SCRIPT_URL = 'https://recorder-assets.contact-796.workers.dev/index.js';
 const TRANSCRIPTION_INPUT_ID = 'transcriptionResult';
 const VOICE_TEXT_SELECTOR = '[data-voice="text"]';
 const VOICE_RAW_SELECTOR = '[data-voice="raw-text"]';
+const SECTION_SELECTOR = '.section_examples';
+const SCROLL_OFFSET_REM = 5;
+const SCROLL_POSITION_TOLERANCE_PX = 80;
+const SCROLL_DURATION = 1.15;
+const SCROLL_EASE = 'power3.inOut';
 
 type TranscriptionData = {
   rawTranscript?: string;
@@ -14,9 +23,19 @@ type TranscriptionData = {
 const sanitize = (str: string): string =>
   str.trim().replace(/  +/g, ' ').replace(/—/g, ' — ').replace(/\n/g, '<br>');
 
+let scrollOnNextRawTextChange = true;
+
 const render = ({ rawTranscript, formattedTranscripts }: TranscriptionData = {}): void => {
   const rawEl = document.querySelector<HTMLElement>(VOICE_RAW_SELECTOR);
-  if (rawEl && rawTranscript) rawEl.innerHTML = sanitize(rawTranscript);
+  if (rawEl && rawTranscript) {
+    const next = sanitize(rawTranscript);
+    const changed = next !== rawEl.innerHTML;
+    rawEl.innerHTML = next;
+    if (changed && scrollOnNextRawTextChange) {
+      scrollOnNextRawTextChange = false;
+      scrollToExamplesSection();
+    }
+  }
 
   let totalDelay = 0;
   [...document.querySelectorAll<HTMLElement>(VOICE_TEXT_SELECTOR)]
@@ -37,7 +56,12 @@ const hookInput = (input: HTMLInputElement): void => {
   let last = '';
   setInterval(() => {
     const val = input.value;
-    if (!val || val === last) return;
+    if (!val) {
+      scrollOnNextRawTextChange = true;
+      last = '';
+      return;
+    }
+    if (val === last) return;
     last = val;
     try {
       const data = JSON.parse(val) as { transcription?: TranscriptionData } & TranscriptionData;
@@ -46,6 +70,27 @@ const hookInput = (input: HTMLInputElement): void => {
       // Ignore invalid JSON while the recorder is still writing.
     }
   }, 150);
+};
+
+const getScrollOffsetPx = (): number =>
+  parseFloat(getComputedStyle(document.documentElement).fontSize) * SCROLL_OFFSET_REM;
+
+const scrollToExamplesSection = (): void => {
+  const section = document.querySelector<HTMLElement>(SECTION_SELECTOR);
+  if (!section) return;
+
+  const targetTop = section.getBoundingClientRect().top;
+  const offset = getScrollOffsetPx();
+  if (Math.abs(targetTop - offset) <= SCROLL_POSITION_TOLERANCE_PX) return;
+
+  const top = Math.max(0, targetTop + window.scrollY - offset);
+
+  gsap.to(window, {
+    scrollTo: { y: top, autoKill: true },
+    duration: SCROLL_DURATION,
+    ease: SCROLL_EASE,
+    overwrite: true,
+  });
 };
 
 const waitForTranscriptionInput = (): void => {
