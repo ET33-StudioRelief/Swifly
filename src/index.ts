@@ -20,6 +20,7 @@ import {
   initToolsSlider,
 } from './typescript/components/slider';
 import { initStatsProgress } from './typescript/components/stats-progress';
+import { initVoiceTranscription } from './typescript/components/voice-transcription';
 import { initZendesk } from './typescript/components/zendesk';
 import { loadFinsweetAttributes, loadFinsweetToc } from './typescript/utils/finsweet-attributes';
 import { launchMarkerSDK } from './typescript/utils/marker';
@@ -34,6 +35,7 @@ window.Webflow.push(() => {
 
   // init protect on element presence
   initHeroEntrance();
+  initVoiceTranscription();
   initFadeByStep();
   initBentoCardsFade();
   initBgParallax();
