@@ -72,3 +72,10 @@
 .testimonial_item.swiper-slide-active {
   position: relative;
 }
+@media screen and (max-width: 767px) {
+  .testimonial_item.swiper-slide-active::before {
+    width: 2rem !important;
+    height: 3rem !important;
+    aspect-ratio: 2/3 !important;
+  }
+}
