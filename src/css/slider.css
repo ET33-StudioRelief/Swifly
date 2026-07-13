@@ -49,14 +49,20 @@
     overflow: hidden;
   }
 
+  /*
+   * Swiper calcule translate3d via width + margin-right des slides (spaceBetween).
+   * Un gap Webflow sur la grille s'ajoute en plus → espacement incohérent entre
+   * 480 et 767px. On force le gap à 0 pour ne garder que le spaceBetween de Swiper.
+   */
   .benefices_grid-wrp.swiper > .grid-cards_grid._2col.swiper-wrapper {
-    display: flex;
+    display: flex !important;
+    flex-flow: row nowrap !important;
     box-sizing: content-box;
     grid-template-columns: unset;
     grid-template-rows: unset;
-    grid-row-gap: unset;
-    grid-column-gap: unset;
-    gap: unset;
+    gap: 0 !important;
+    column-gap: 0 !important;
+    row-gap: 0 !important;
   }
 
   .benefices_grid-wrp .benefices_slide.swiper-slide {

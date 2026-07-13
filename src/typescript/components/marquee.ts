@@ -10,6 +10,22 @@ const MARQUEE_DURATION = 40;
 const HOVER_TIME_SCALE = 0.25;
 const FILL_RATIO = 2.2;
 
+/** Effet « dock » mobile : défilement continu (rAF) + agrandissement/dé-flou
+ * des logos à mesure qu'ils approchent le centre du viewport. Piloté 100% en
+ * JS pour garantir une boucle réellement infinie (offset modulo, aucun snap). */
+const MOBILE = {
+  /** Vitesse de défilement (px/s). */
+  SPEED_PX_PER_SEC: 45,
+  /** Échelle des logos loin du centre. */
+  BASE_SCALE: 0.82,
+  /** Échelle au centre du viewport. */
+  PEAK_SCALE: 1.18,
+  /** Flou (px) appliqué loin du centre, ramené à 0 au centre. */
+  MAX_BLUR: 4,
+  /** Rayon d'influence exprimé en nombre d'items (pitch). */
+  ACTIVE_RADIUS_ITEMS: 1.8,
+} as const;
+
 const DOCK = {
   BASE_SCALE: 1,
   PEAK_SCALE: 2,
@@ -40,6 +56,12 @@ interface DockItem {
 interface MarqueeInstance {
   destroy: () => void;
   sync: () => void;
+}
+
+interface MobileCell {
+  el: HTMLElement;
+  /** Centre horizontal (viewport) de l'item mesuré à offset 0. */
+  base: number;
 }
 
 /**
@@ -100,8 +122,8 @@ export function initBrandsMarquee(selector = '.brands_logo-wrp'): void {
 /**
  * Initializes every marquee carrying the `data-marquee` attribute.
  *
- * Desktop : GSAP + effet dock inchangé. Mobile (≤767px) : animation CSS
- * (compositor) sans dock, pour éviter les saccades.
+ * Desktop : GSAP + effet dock au survol. Mobile (≤767px) : contrôleur JS dédié
+ * (défilement continu + dock centré sur le viewport), cf. createMobileMarquee.
  *
  * Each marquee needs a `.marquee-track` child. Add `data-effect="dock"` on the
  * marquee to enable the macOS-dock-style hover magnification of `.marquee-item`s.
@@ -137,35 +159,33 @@ function initMarquee(marquee: HTMLElement): MarqueeInstance {
   let mode: 'mobile' | 'desktop' | null = null;
   let tween: gsap.core.Tween | null = null;
   let dock: DockEffect | null = null;
+  let mobile: DockEffect | null = null;
 
   const isMobile = (): boolean => window.matchMedia(MOBILE_QUERY).matches;
 
-  const buildContent = (): void => {
+  const buildDesktopContent = (): void => {
     track.innerHTML = original;
     const setWidth = track.scrollWidth;
     const containerWidth = marquee.offsetWidth;
-
-    if (isMobile()) {
-      track.innerHTML = original + original;
-      return;
-    }
-
     const setsNeeded = Math.max(2, Math.ceil((containerWidth * FILL_RATIO) / setWidth));
     track.innerHTML = original.repeat(setsNeeded);
   };
 
-  const teardownScroll = (): void => {
+  const teardownDesktopScroll = (): void => {
     tween?.kill();
     tween = null;
     gsap.killTweensOf(track);
     gsap.set(track, { clearProps: 'transform' });
-    track.classList.remove('is-animated');
-    track.style.removeProperty('--marquee-duration');
   };
 
   const teardownDock = (): void => {
     dock?.destroy();
     dock = null;
+  };
+
+  const teardownMobile = (): void => {
+    mobile?.destroy();
+    mobile = null;
   };
 
   const setupDesktopScroll = (): void => {
@@ -176,11 +196,6 @@ function initMarquee(marquee: HTMLElement): MarqueeInstance {
       ease: 'none',
       repeat: -1,
     });
-  };
-
-  const setupMobileScroll = (): void => {
-    track.style.setProperty('--marquee-duration', `${MARQUEE_DURATION}s`);
-    track.classList.add('is-animated');
   };
 
   const onEnter = (): void => {
@@ -200,22 +215,26 @@ function initMarquee(marquee: HTMLElement): MarqueeInstance {
     const nextMode = isMobile() ? 'mobile' : 'desktop';
 
     if (nextMode === mode) {
-      buildContent();
+      if (mode === 'mobile') {
+        mobile?.refresh();
+        return;
+      }
+      buildDesktopContent();
       dock?.refresh();
       return;
     }
 
-    teardownScroll();
+    teardownDesktopScroll();
     teardownDock();
+    teardownMobile();
     mode = nextMode;
 
-    buildContent();
-
     if (mode === 'mobile') {
-      setupMobileScroll();
+      mobile = createMobileMarquee(marquee, track, original);
       return;
     }
 
+    buildDesktopContent();
     setupDesktopScroll();
 
     if (marquee.dataset.effect === 'dock') {
@@ -228,10 +247,130 @@ function initMarquee(marquee: HTMLElement): MarqueeInstance {
   return {
     sync,
     destroy: () => {
-      teardownScroll();
+      teardownDesktopScroll();
       teardownDock();
+      teardownMobile();
       marquee.removeEventListener('mouseenter', onEnter);
       marquee.removeEventListener('mouseleave', onLeave);
+      track.innerHTML = original;
+    },
+  };
+}
+
+/**
+ * Marquee mobile : défilement infini fluide + effet « dock » centré viewport.
+ *
+ * Le track est dupliqué en un nombre entier de copies puis translaté via un
+ * offset **modulo une période** (distance exacte entre un item et son clone),
+ * ce qui rend la boucle mathématiquement continue — aucun retour en arrière.
+ * Les positions des items sont mesurées une seule fois (à offset 0), donc la
+ * frame ne fait que des écritures : pas de reflow, défilement fluide.
+ *
+ * Plus un item approche du centre horizontal du viewport, plus il grossit et se
+ * dé-floute (interpolation smoothstep).
+ */
+function createMobileMarquee(
+  marquee: HTMLElement,
+  track: HTMLElement,
+  original: string
+): DockEffect {
+  const { SPEED_PX_PER_SEC, BASE_SCALE, PEAK_SCALE, MAX_BLUR, ACTIVE_RADIUS_ITEMS } = MOBILE;
+
+  let cells: MobileCell[] = [];
+  let period = 0;
+  let pitch = 0;
+  let offset = 0;
+  let last = 0;
+  let rafId: number | null = null;
+
+  const build = (): void => {
+    // 1 copie pour mesurer la largeur d'un set et compter les items.
+    track.innerHTML = original;
+    const perSet = track.children.length;
+    const oneSet = track.scrollWidth || 1;
+
+    // Assez de copies pour couvrir le viewport pendant toute la période.
+    const copies = Math.max(2, Math.ceil(marquee.offsetWidth / oneSet) + 1);
+    track.innerHTML = original.repeat(copies);
+
+    // Style layout + reset transform pour mesurer « à offset 0 ».
+    track.style.display = 'flex';
+    track.style.flexWrap = 'nowrap';
+    track.style.width = 'max-content';
+    track.style.alignItems = 'center';
+    track.style.willChange = 'transform';
+    track.style.transform = 'translate3d(0,0,0)';
+
+    const kids = Array.from(track.children) as HTMLElement[];
+    kids.forEach((el) => {
+      el.style.flexShrink = '0';
+      el.style.transformOrigin = '50% 50%';
+      el.style.willChange = 'transform, filter';
+    });
+
+    // Période exacte (espacements inclus) = décalage entre un item et son clone.
+    period = kids[perSet] ? kids[perSet].offsetLeft - kids[0].offsetLeft : oneSet;
+    pitch = perSet > 0 ? period / perSet : period;
+
+    cells = kids.map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { el, base: rect.left + rect.width / 2 };
+    });
+  };
+
+  const frame = (now: number): void => {
+    const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+    last = now;
+
+    if (period > 0) {
+      offset = (offset + SPEED_PX_PER_SEC * dt) % period;
+      track.style.transform = `translate3d(${(-offset).toFixed(2)}px,0,0)`;
+    }
+
+    const center = window.innerWidth / 2;
+    const radius = pitch * ACTIVE_RADIUS_ITEMS || 1;
+
+    for (const cell of cells) {
+      const cx = cell.base - offset;
+      const dist = Math.abs(cx - center);
+      let t = Math.max(0, 1 - dist / radius);
+      t = t * t * (3 - 2 * t); // smoothstep
+
+      const scale = BASE_SCALE + (PEAK_SCALE - BASE_SCALE) * t;
+      const blur = MAX_BLUR * (1 - t);
+      cell.el.style.transform = `scale(${scale.toFixed(4)})`;
+      cell.el.style.filter = blur < 0.05 ? 'none' : `blur(${blur.toFixed(2)}px)`;
+    }
+
+    rafId = requestAnimationFrame(frame);
+  };
+
+  build();
+  rafId = requestAnimationFrame(frame);
+
+  return {
+    refresh: () => {
+      const prev = offset;
+      build();
+      offset = period > 0 ? prev % period : 0;
+    },
+    destroy: () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      rafId = null;
+      track.style.removeProperty('transform');
+      track.style.removeProperty('display');
+      track.style.removeProperty('flex-wrap');
+      track.style.removeProperty('width');
+      track.style.removeProperty('align-items');
+      track.style.removeProperty('will-change');
+      cells.forEach(({ el }) => {
+        el.style.removeProperty('transform');
+        el.style.removeProperty('filter');
+        el.style.removeProperty('transform-origin');
+        el.style.removeProperty('flex-shrink');
+        el.style.removeProperty('will-change');
+      });
+      cells = [];
       track.innerHTML = original;
     },
   };

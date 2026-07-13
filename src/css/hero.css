@@ -11,6 +11,7 @@
     flex-flow: column;
     justify-content: flex-start;
     place-items: center start;
+    gap: 0px;
     grid-template-columns: 1fr;
   }
   .hero_left-col {
@@ -37,5 +38,27 @@
   .hero_badge-wrp {
     justify-content: center;
     align-items: center;
+  }
+}
+
+@media (min-width: 880px) and (max-width: 992px) {
+  .hp-hero_left-svg {
+    left: -4rem;
+  }
+  .hp-hero_deco-stars-wrp {
+    right: -2.5rem;
+  }
+}
+@media (min-width: 480px) and (max-width: 560px) {
+  .examples_voice-wrp {
+    min-width: 400px;
+  }
+  .hp-hero_left-svg {
+    left: -1rem;
+  }
+}
+@media screen and (max-width: 430px) {
+  .hp-hero_left-svg {
+    left: 0rem;
   }
 }

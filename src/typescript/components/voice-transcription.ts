@@ -18,6 +18,8 @@ const SCROLL_EASE = 'power3.inOut';
 type TranscriptionData = {
   rawTranscript?: string;
   formattedTranscripts?: string[];
+  /** HTML prêt à insérer (déjà échappé par le widget, <br> inclus) avec le surlignage des différences. */
+  formattedTranscriptsHtml?: string[];
 };
 
 const sanitize = (str: string): string =>
@@ -25,7 +27,11 @@ const sanitize = (str: string): string =>
 
 let scrollOnNextRawTextChange = true;
 
-const render = ({ rawTranscript, formattedTranscripts }: TranscriptionData = {}): void => {
+const render = ({
+  rawTranscript,
+  formattedTranscripts,
+  formattedTranscriptsHtml,
+}: TranscriptionData = {}): void => {
   const rawEl = document.querySelector<HTMLElement>(VOICE_RAW_SELECTOR);
   if (rawEl && rawTranscript) {
     const next = sanitize(rawTranscript);
@@ -41,11 +47,12 @@ const render = ({ rawTranscript, formattedTranscripts }: TranscriptionData = {})
   [...document.querySelectorAll<HTMLElement>(VOICE_TEXT_SELECTOR)]
     .sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index))
     .forEach((el, i) => {
+      const html = formattedTranscriptsHtml?.[i];
       const text = formattedTranscripts?.[i];
-      if (!text) return;
+      if (!html && !text) return;
       gsap.set(el, { opacity: 0 });
       setTimeout(() => {
-        el.innerHTML = sanitize(text);
+        el.innerHTML = html ?? sanitize(text!);
         gsap.to(el, { opacity: 1, duration: 0.4, ease: 'power2.out' });
       }, totalDelay * 1000);
       totalDelay += 0.6;
