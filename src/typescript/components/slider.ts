@@ -21,12 +21,12 @@ const BENEFICES_CARD_SELECTOR = '.card.is-grid-2col';
 const BENEFICES_SLIDE_CLASS = 'benefices_slide swiper-slide';
 
 const beneficesSwiperOptions: SwiperOptions = {
-  slidesPerView: 1,
+  // > 1 pour laisser dépasser la slide suivante et inciter au swipe (effet "peek").
+  slidesPerView: 1.1,
   centeredSlides: true,
   rewind: true,
   spaceBetween: 16,
   grabCursor: true,
-  roundLengths: true,
 };
 
 const getBeneficesGrid = (container: HTMLElement): HTMLElement | null =>

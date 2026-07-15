@@ -93,7 +93,7 @@ const scrollToExamplesSection = (): void => {
   const top = Math.max(0, targetTop + window.scrollY - offset);
 
   gsap.to(window, {
-    scrollTo: { y: top, autoKill: true },
+    scrollTo: { y: top, autoKill: false },
     duration: SCROLL_DURATION,
     ease: SCROLL_EASE,
     overwrite: true,
