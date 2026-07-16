@@ -35,6 +35,25 @@
   transform: rotate(180deg);
 }
 
+/*
+ * Bridge the visual gap (margin-top) between toggle and menu so hover
+ * does not leave .w-dropdown and close the Webflow dropdown early.
+ */
+@media (min-width: 992px) {
+  .navbar-drp-menu.w-dropdown-list {
+    position: absolute;
+  }
+
+  .navbar-drp-menu.w-dropdown-list::before {
+    content: '';
+    position: absolute;
+    top: -1rem;
+    left: 0;
+    width: 100%;
+    height: 1rem;
+  }
+}
+
 /* ─── Hamburger / toggle mobile ─── */
 .navbar-toggle {
   position: relative;
